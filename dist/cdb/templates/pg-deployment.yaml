@@ -1,0 +1,76 @@
+---
+# Source: cdb/templates/pg-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cdb-db-deployment
+  labels: 
+    app.kubernetes.io/name: cdb
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: db
+    app.kubernetes.io/part-of: cdb
+    app.kubernetes.io/managed-by: Helm
+    app/language: postgresql
+    app/version: latest
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+        app.kubernetes.io/name: cdb
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/component: db
+  template:
+    metadata:
+      labels: 
+          app.kubernetes.io/name: cdb
+          app.kubernetes.io/instance: release-name
+          app.kubernetes.io/component: db
+          app.kubernetes.io/part-of: cdb
+          app.kubernetes.io/managed-by: Helm
+          app/language: postgresql
+          app/version: latest
+      annotations:
+        checksum/config: 144e20139de36973f17be2de239bffd42b1a3b51f625a8abd9d6bfbbc96555e9
+    spec:
+      containers:
+      - name: postgres
+        image: registry.master3.takima.io/guide/kubernetes-resources/db:latest
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: pg-data
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "400Mi"
+            cpu: "0.1"
+          limits:
+            memory: "1000Mi"
+            cpu: "0.8"
+        env:
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: cdb-db-cm  
+                key: db_name   
+          - name: PGDATA
+            valueFrom:
+              configMapKeyRef:
+                name: cdb-db-cm  
+                key: db_path     
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: cdb-db-credentials  
+                key: pg_username     
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: cdb-db-credentials  
+                key: pg_password     
+      volumes:
+      - name: pg-data
+        persistentVolumeClaim:
+          claimName: cdb-db-pvc
+      imagePullSecrets:
+      - name: auth-master3-registry

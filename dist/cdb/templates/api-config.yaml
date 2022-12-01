@@ -1,0 +1,17 @@
+---
+# Source: cdb/templates/api-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cdb-api-cm
+  labels: 
+    app.kubernetes.io/name: cdb
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: api
+    app.kubernetes.io/part-of: cdb
+    app.kubernetes.io/managed-by: Helm
+    app/language: java
+    app/version: latest
+data:
+  DB_ENDPOINT: 'cdb-db-service:5432'
+  DB_NAME: cdb-db

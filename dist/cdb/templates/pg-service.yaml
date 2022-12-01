@@ -1,0 +1,22 @@
+---
+# Source: cdb/templates/pg-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: cdb-db-service
+  labels: 
+    app.kubernetes.io/name: cdb
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: db
+    app.kubernetes.io/part-of: cdb
+    app.kubernetes.io/managed-by: Helm
+    app/language: postgresql
+    app/version: latest
+spec:
+  type: ClusterIP
+  ports:
+   - port: 5432
+  selector: 
+    app.kubernetes.io/name: cdb
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: db

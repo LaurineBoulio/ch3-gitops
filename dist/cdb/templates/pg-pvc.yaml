@@ -1,0 +1,22 @@
+---
+# Source: cdb/templates/pg-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cdb-db-pvc
+  labels: 
+    app.kubernetes.io/name: cdb
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: db
+    app.kubernetes.io/part-of: cdb
+    app.kubernetes.io/managed-by: Helm
+    app/language: postgresql
+    app/version: latest
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 512Mi
+  storageClassName: gp2

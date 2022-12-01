@@ -1,0 +1,16 @@
+---
+# Source: cdb/templates/front-config.yaml
+apiVersion: v1  
+kind: ConfigMap  
+metadata:  
+  name: cdb-front-cm
+  labels: 
+    app.kubernetes.io/name: cdb
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: front
+    app.kubernetes.io/part-of: cdb
+    app.kubernetes.io/managed-by: Helm
+    app/language: javascript
+    app/version: latest
+data:  
+  API_URL: "http://api.laurine-boulio.takima.cloud"

@@ -1,0 +1,54 @@
+---
+# Source: cdb/templates/front-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cdb-front-deployment
+  labels: 
+    app.kubernetes.io/name: cdb
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: front
+    app.kubernetes.io/part-of: cdb
+    app.kubernetes.io/managed-by: Helm
+    app/language: javascript
+    app/version: latest
+spec:
+  replicas: 3
+  selector:
+    matchLabels: 
+        app.kubernetes.io/name: cdb
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/component: front
+  template:
+    metadata:
+      labels: 
+          app.kubernetes.io/name: cdb
+          app.kubernetes.io/instance: release-name
+          app.kubernetes.io/component: front
+          app.kubernetes.io/part-of: cdb
+          app.kubernetes.io/managed-by: Helm
+          app/language: javascript
+          app/version: latest
+      annotations:
+        checksum/config: c35d85658e1e3b7a6b0847d7f81f43bcccfc600a7d9bebfbc84be3697c64963f
+    spec:
+      imagePullSecrets:
+        - name: auth-master3-registry
+      containers:
+      - name: front
+        image: registry.master3.takima.io/guide/kubernetes-resources/front:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "0.1"
+          limits:
+            memory: "300Mi"
+            cpu: "0.5"
+        env:
+          - name: API_URL
+            valueFrom:
+              configMapKeyRef:
+                name: cdb-front-cm
+                key: API_URL

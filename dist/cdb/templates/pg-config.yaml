@@ -1,0 +1,17 @@
+---
+# Source: cdb/templates/pg-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cdb-db-cm
+  labels: 
+    app.kubernetes.io/name: cdb
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: db
+    app.kubernetes.io/part-of: cdb
+    app.kubernetes.io/managed-by: Helm
+    app/language: postgresql
+    app/version: latest
+data:
+  db_name: cdb-db
+  db_path: /var/lib/postgresql/data/pgdata

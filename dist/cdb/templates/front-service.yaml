@@ -1,0 +1,23 @@
+---
+# Source: cdb/templates/front-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: cdb-front-service
+  labels: 
+    app.kubernetes.io/name: cdb
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: front
+    app.kubernetes.io/part-of: cdb
+    app.kubernetes.io/managed-by: Helm
+    app/language: javascript
+    app/version: latest
+spec:
+  selector: 
+    app.kubernetes.io/name: cdb
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: front
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

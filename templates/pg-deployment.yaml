@@ -1,0 +1,59 @@
+{{- if .Values.db.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "AppCtx.dbName" . }}-deployment
+  labels: {{ include "AppCtx.dbLabels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {{ include "AppCtx.dbSelectorLabels" . | nindent 8 }}
+  template:
+    metadata:
+      labels: {{ include "AppCtx.dbLabels" . | nindent 10 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/pg-config.yaml") . | sha256sum }}
+    spec:
+      containers:
+      - name: postgres
+        image: {{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: pg-data
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "400Mi"
+            cpu: "0.1"
+          limits:
+            memory: "1000Mi"
+            cpu: "0.8"
+        env:
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: {{ template "AppCtx.dbName" . }}-cm  
+                key: db_name   
+          - name: PGDATA
+            valueFrom:
+              configMapKeyRef:
+                name: {{ template "AppCtx.dbName" . }}-cm  
+                key: db_path     
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "AppCtx.dbName" . }}-credentials  
+                key: pg_username     
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "AppCtx.dbName" . }}-credentials  
+                key: pg_password     
+      volumes:
+      - name: pg-data
+        persistentVolumeClaim:
+          claimName: {{ template "AppCtx.dbName" . }}-pvc
+      imagePullSecrets:
+      - name: auth-master3-registry
+{{- end }}

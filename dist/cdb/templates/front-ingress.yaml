@@ -1,0 +1,28 @@
+---
+# Source: cdb/templates/front-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: cdb-front-ingress
+  labels: 
+    app.kubernetes.io/name: cdb
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: front
+    app.kubernetes.io/part-of: cdb
+    app.kubernetes.io/managed-by: Helm
+    app/language: javascript
+    app/version: latest
+spec:
+  rules:
+  - host: www.front.laurine-boulio.takima.cloud
+    http:
+      paths:
+      - backend:
+          service:
+            name: cdb-front-service
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
